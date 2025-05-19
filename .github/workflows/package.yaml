@@ -1,0 +1,54 @@
+name: Kill DaBai
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      
+      - name: Package application
+        run: |
+          pip install pyinstaller
+          pyinstaller --noconfirm --onefile --windowed --icon "src/VW.ico" "src/KillDaBai.py"
+
+      - name: Upload packaged application
+        uses: actions/upload-artifact@v4
+        with:
+          name: KillDaBai.exe
+          path: dist/KillDaBai.exe
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          tag_name: v1.0.1
+          release_name: "Release v1.0.1"
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/KillDaBai.exe
+          asset_name: KillDaBai.exe
+          asset_content_type: application/octet-stream
