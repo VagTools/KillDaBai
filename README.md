@@ -11,7 +11,12 @@ This tool is designed to solve this problem. It will automatically:
 
 After these operations, you can reinstall Softether or use other software's built-in Softether normally.
 
-[中文说明](README.zh.md)
+[中文介绍](README.zh.md)
+
+## Download
+
+You can download the latest release here:
+[https://github.com/VagTools/KillDaBai/releases](https://github.com/VagTools/KillDaBai/releases)
 
 ## Usage
 
@@ -26,5 +31,6 @@ After these operations, you can reinstall Softether or use other software's buil
 If you have any questions, please contact the developer.
 
 ---
+
 
 
