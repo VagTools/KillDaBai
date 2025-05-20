@@ -5,6 +5,9 @@ import os
 import sys
 import ctypes
 import time
+import tkinter as tk
+from tkinter.scrolledtext import ScrolledText
+from tkinter import messagebox
 
 # ====== User configurable service name and directory path ======
 SERVICE_NAME = "sevpnserver"  # Replace with your service name
@@ -59,6 +62,67 @@ def wait_for_user():
         except Exception:
             pass
 
+def gui_main():
+    def log_write(msg):
+        log_area.config(state=tk.NORMAL)
+        log_area.insert(tk.END, msg + "\n")
+        log_area.see(tk.END)
+        log_area.config(state=tk.DISABLED)
+        root.update()
+
+    def run_steps():
+        log_area.config(state=tk.NORMAL)
+        log_area.delete(1.0, tk.END)
+        log_area.config(state=tk.DISABLED)
+        log_write(f"[INFO] Target service name: {SERVICE_NAME}")
+        log_write(f"[INFO] Target directory path: {DIR_PATH}")
+        # Step 1: Stop service
+        log_write(f"[STEP 1] Stopping service...")
+        result = subprocess.run(["sc", "stop", SERVICE_NAME], capture_output=True, text=True)
+        log_write(result.stdout)
+        if result.returncode != 0:
+            log_write(f"[WARN] Error stopping service: {result.stderr.strip()}")
+        else:
+            log_write(f"[INFO] Service {SERVICE_NAME} stopped (or stop attempted).")
+        # Step 2: Delete service
+        log_write(f"[STEP 2] Deleting service...")
+        result = subprocess.run(["sc", "delete", SERVICE_NAME], capture_output=True, text=True)
+        log_write(result.stdout)
+        if result.returncode != 0:
+            log_write(f"[WARN] Error deleting service: {result.stderr.strip()}")
+        else:
+            log_write(f"[INFO] Service {SERVICE_NAME} deleted (or delete attempted).")
+        # Step 3: Wait
+        wait_seconds = 10
+        log_write(f"[STEP 3] Waiting {wait_seconds} seconds for service to fully exit...")
+        root.update()
+        time.sleep(wait_seconds)
+        # Step 4: Delete directory
+        log_write(f"[STEP 4] Deleting directory...")
+        if os.path.exists(DIR_PATH):
+            try:
+                shutil.rmtree(DIR_PATH)
+                log_write(f"[INFO] Directory {DIR_PATH} deleted successfully.")
+            except Exception as e:
+                log_write(f"[ERROR] Error deleting directory: {e}")
+        else:
+            log_write(f"[WARN] Directory {DIR_PATH} does not exist.")
+        log_write("[DONE] All operations completed.")
+
+    root = tk.Tk()
+    root.title("KillDaBai")
+    root.geometry("700x420")
+    tk.Label(root, text="KillDaBai - https://github.com/VagTools/KillDaBai", font=("Arial", 12, "bold")).pack(pady=8)
+    log_area = ScrolledText(root, width=85, height=20, font=("Consolas", 10), state=tk.DISABLED)
+    log_area.pack(padx=10, pady=5)
+    btn_frame = tk.Frame(root)
+    btn_frame.pack(pady=8)
+    start_btn = tk.Button(btn_frame, text="Start", width=12, command=run_steps)
+    start_btn.pack(side=tk.LEFT, padx=10)
+    exit_btn = tk.Button(btn_frame, text="Exit", width=12, command=root.destroy)
+    exit_btn.pack(side=tk.LEFT, padx=10)
+    root.mainloop()
+
 def main():
     print("KillDaBai - https://github.com/VagTools/KillDaBai")
     print(f"[INFO] Target service name: {SERVICE_NAME}")
@@ -75,8 +139,6 @@ def main():
 
 if __name__ == "__main__":
     if not is_admin():
-        print("[ERROR] Please run this script as administrator!\nRight-click and run Command Prompt or PowerShell as administrator, then execute this script.")
-        wait_for_user()
+        messagebox.showerror("Error", "Please run this script as administrator!\nRight-click and run Command Prompt or PowerShell as administrator, then execute this script.")
     else:
-        main()
-        wait_for_user()
+        gui_main()
