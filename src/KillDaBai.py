@@ -47,9 +47,17 @@ def delete_directory(dir_path):
         print(f"[WARN] Directory {dir_path} does not exist.")
 
 def wait_for_user():
-    # Only wait for user input if stdin is a tty (console)
-    if sys.stdin and sys.stdin.isatty():
-        input("Press Enter to exit...")
+    # Try input if possible, else fallback to os.system('pause') for GUI/EXE
+    try:
+        if sys.stdin and sys.stdin.isatty():
+            input("Press Enter to exit...")
+        else:
+            raise Exception()
+    except Exception:
+        try:
+            os.system("pause")
+        except Exception:
+            pass
 
 def main():
     print("KillDaBai - https://github.com/VagTools/KillDaBai")
