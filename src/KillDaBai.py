@@ -6,8 +6,8 @@ import sys
 import ctypes
 
 # ====== User configurable service name and directory path ======
-SERVICE_NAME = "YourServiceName"  # Replace with your service name
-DIR_PATH = r"C:\Path\To\Delete"  # Replace with the directory path to delete
+SERVICE_NAME = "sevpnserver"  # Replace with your service name
+DIR_PATH = r"C:\SoftEtherServer"  # Replace with the directory path to delete
 # ===============================================================
 
 def is_admin():
