@@ -4,6 +4,7 @@ import shutil
 import os
 import sys
 import ctypes
+import time
 
 # ====== User configurable service name and directory path ======
 SERVICE_NAME = "sevpnserver"  # Replace with your service name
@@ -46,16 +47,23 @@ def delete_directory(dir_path):
         print(f"[WARN] Directory {dir_path} does not exist.")
 
 def main():
+    print("KillDaBai - https://github.com/VagTools/KillDaBai")
     print(f"[INFO] Target service name: {SERVICE_NAME}")
     print(f"[INFO] Target directory path: {DIR_PATH}")
     stop_service(SERVICE_NAME)
     delete_service(SERVICE_NAME)
+    # Wait for service process to exit before deleting directory
+    wait_seconds = 10
+    print(f"[INFO] Waiting {wait_seconds} seconds for service to fully exit...")
+    time.sleep(wait_seconds)
     delete_directory(DIR_PATH)
     print("[DONE] All operations completed.")
+    
 
 if __name__ == "__main__":
     if not is_admin():
         print("[ERROR] Please run this script as administrator!\nRight-click and run Command Prompt or PowerShell as administrator, then execute this script.")
         input("Press Enter to exit...")
-        sys.exit(1)
-    main()
+    else:
+        main()
+        input("Press Enter to exit...")
