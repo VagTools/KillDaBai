@@ -46,6 +46,11 @@ def delete_directory(dir_path):
     else:
         print(f"[WARN] Directory {dir_path} does not exist.")
 
+def wait_for_user():
+    # Only wait for user input if stdin is a tty (console)
+    if sys.stdin and sys.stdin.isatty():
+        input("Press Enter to exit...")
+
 def main():
     print("KillDaBai - https://github.com/VagTools/KillDaBai")
     print(f"[INFO] Target service name: {SERVICE_NAME}")
@@ -63,7 +68,7 @@ def main():
 if __name__ == "__main__":
     if not is_admin():
         print("[ERROR] Please run this script as administrator!\nRight-click and run Command Prompt or PowerShell as administrator, then execute this script.")
-        input("Press Enter to exit...")
+        wait_for_user()
     else:
         main()
-        input("Press Enter to exit...")
+        wait_for_user()
