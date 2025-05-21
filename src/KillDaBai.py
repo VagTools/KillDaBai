@@ -2,7 +2,6 @@ import argparse
 import subprocess
 import shutil
 import os
-import sys
 import ctypes
 import time
 import tkinter as tk
@@ -48,19 +47,6 @@ def delete_directory(dir_path):
             print(f"[ERROR] Error deleting directory: {e}")
     else:
         print(f"[WARN] Directory {dir_path} does not exist.")
-
-def wait_for_user():
-    # Try input if possible, else fallback to os.system('pause') for GUI/EXE
-    try:
-        if sys.stdin and sys.stdin.isatty():
-            input("Press Enter to exit...")
-        else:
-            raise Exception()
-    except Exception:
-        try:
-            os.system("pause")
-        except Exception:
-            pass
 
 def gui_main():
     def log_write(msg):
@@ -110,9 +96,12 @@ def gui_main():
         log_write("[DONE] All operations completed.")
 
     root = tk.Tk()
-    root.title("KillDaBai")
+    root.title("KillDaBai By VagTools")
     root.geometry("700x420")
-    tk.Label(root, text="KillDaBai - https://github.com/VagTools/KillDaBai", font=("Arial", 12, "bold")).pack(pady=8)
+    root.resizable(False, False)  # 禁止拖动改变窗口大小
+    root.attributes('-toolwindow', True)  # 去掉最大化按钮（部分系统有效）
+    root.protocol("WM_RESIZE", lambda: None)  # 防止部分环境下仍可拖动
+    tk.Label(root, text="https://github.com/VagTools/KillDaBai", font=("Arial", 12, "bold")).pack(pady=8)
     log_area = ScrolledText(root, width=85, height=20, font=("Consolas", 10), state=tk.DISABLED)
     log_area.pack(padx=10, pady=5)
     btn_frame = tk.Frame(root)
@@ -121,21 +110,7 @@ def gui_main():
     start_btn.pack(side=tk.LEFT, padx=10)
     exit_btn = tk.Button(btn_frame, text="Exit", width=12, command=root.destroy)
     exit_btn.pack(side=tk.LEFT, padx=10)
-    root.mainloop()
-
-def main():
-    print("KillDaBai - https://github.com/VagTools/KillDaBai")
-    print(f"[INFO] Target service name: {SERVICE_NAME}")
-    print(f"[INFO] Target directory path: {DIR_PATH}")
-    stop_service(SERVICE_NAME)
-    delete_service(SERVICE_NAME)
-    # Wait for service process to exit before deleting directory
-    wait_seconds = 10
-    print(f"[INFO] Waiting {wait_seconds} seconds for service to fully exit...")
-    time.sleep(wait_seconds)
-    delete_directory(DIR_PATH)
-    print("[DONE] All operations completed.")
-    
+    root.mainloop()    
 
 if __name__ == "__main__":
     if not is_admin():
