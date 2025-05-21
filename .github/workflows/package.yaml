@@ -24,7 +24,7 @@ jobs:
       - name: Package application
         run: |
           pip install pyinstaller
-          pyinstaller --noconfirm --onefile --windowed --icon "src/VW.ico" "src/KillDaBai.py"
+          pyinstaller --noconfirm --onefile --windowed --uac-admin --icon "src/VW.ico" "src/KillDaBai.py"
 
       - name: Upload packaged application
         uses: actions/upload-artifact@v4
